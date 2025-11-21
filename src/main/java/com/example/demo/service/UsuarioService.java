@@ -1,5 +1,11 @@
 package com.example.demo.service;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.example.demo.model.Pedido;
 import com.example.demo.model.Usuario;
 import com.example.demo.repository.DetallePedidoRepository;
@@ -10,11 +16,6 @@ import com.example.demo.repository.PedidoRepository;
 import com.example.demo.repository.UsuarioRepository;
 
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @Transactional
@@ -41,10 +42,6 @@ public class UsuarioService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // =============================
-    // MÉTODOS BÁSICOS
-    // =============================
-
     public Usuario findById(Long id) {
         return usuarioRepository.findById(id).orElse(null);
     }
@@ -53,9 +50,8 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
 
-    // 🔥 CORREGIDO: encriptar contraseña ANTES de guardar 🔥
     public Usuario save(Usuario usuario) {
-        usuario.setContrasenia(passwordEncoder.encode(usuario.getContrasenia()));
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         return usuarioRepository.save(usuario);
     }
 
@@ -67,8 +63,8 @@ public class UsuarioService {
             usuarioToUpdate.setApellido(usuario.getApellido());
             usuarioToUpdate.setEmail(usuario.getEmail());
 
-            if (usuario.getContrasenia() != null) {
-                usuarioToUpdate.setContrasenia(passwordEncoder.encode(usuario.getContrasenia()));
+            if (usuario.getPassword() != null && !usuario.getPassword().isBlank()) {
+                usuarioToUpdate.setPassword(passwordEncoder.encode(usuario.getPassword()));
             }
 
             usuarioToUpdate.setTelefono(usuario.getTelefono());
@@ -86,26 +82,33 @@ public class UsuarioService {
 
         if (usuarioToPatch != null) {
 
-            if (usuario.getNombre() != null)
+            if (usuario.getNombre() != null) {
                 usuarioToPatch.setNombre(usuario.getNombre());
+            }
 
-            if (usuario.getApellido() != null)
+            if (usuario.getApellido() != null) {
                 usuarioToPatch.setApellido(usuario.getApellido());
+            }
 
-            if (usuario.getEmail() != null)
+            if (usuario.getEmail() != null) {
                 usuarioToPatch.setEmail(usuario.getEmail());
+            }
 
-            if (usuario.getContrasenia() != null)
-                usuarioToPatch.setContrasenia(passwordEncoder.encode(usuario.getContrasenia()));
+            if (usuario.getPassword() != null && !usuario.getPassword().isBlank()) {
+                usuarioToPatch.setPassword(passwordEncoder.encode(usuario.getPassword()));
+            }
 
-            if (usuario.getTelefono() != null)
+            if (usuario.getTelefono() != null) {
                 usuarioToPatch.setTelefono(usuario.getTelefono());
+            }
 
-            if (usuario.getRol() != null)
+            if (usuario.getRol() != null) {
                 usuarioToPatch.setRol(usuario.getRol());
+            }
 
-            if (usuario.getDireccionPrincipal() != null)
+            if (usuario.getDireccionPrincipal() != null) {
                 usuarioToPatch.setDireccionPrincipal(usuario.getDireccionPrincipal());
+            }
 
             return usuarioRepository.save(usuarioToPatch);
         }
@@ -113,9 +116,6 @@ public class UsuarioService {
         return null;
     }
 
-    // =============================
-    // BORRADO EN CASCADA
-    // =============================
     public void delete(Long id) {
 
         Usuario usuario = usuarioRepository.findById(id)
@@ -129,11 +129,13 @@ public class UsuarioService {
 
             detallePedidoRepository.deleteByPedido(pedido);
 
-            if (pedido.getPago() != null)
+            if (pedido.getPago() != null) {
                 pagoRepository.deleteById(pedido.getPago().getId_pago());
+            }
 
-            if (pedido.getEnvio() != null)
+            if (pedido.getEnvio() != null) {
                 envioRepository.deleteById(pedido.getEnvio().getId_envio());
+            }
         }
 
         pedidoRepository.deleteByUsuario(usuario);
@@ -141,9 +143,6 @@ public class UsuarioService {
         usuarioRepository.delete(usuario);
     }
 
-    // =============================
-    // LOGIN
-    // =============================
     public Usuario findByEmail(String email) {
         return usuarioRepository.findByEmail(email);
     }

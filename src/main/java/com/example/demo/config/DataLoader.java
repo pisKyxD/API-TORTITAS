@@ -31,8 +31,10 @@ import com.example.demo.repository.SaborRepository;
 import com.example.demo.repository.UsuarioRepository;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import net.datafaker.Faker;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -70,6 +72,9 @@ public class DataLoader implements CommandLineRunner {
     private PagoRepository pagoRepository;
     @Autowired
     private EnvioRepository envioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private Faker faker = new Faker();
     private Random random = new Random();
@@ -113,10 +118,13 @@ public class DataLoader implements CommandLineRunner {
             u.setNombre(faker.name().firstName());
             u.setApellido(faker.name().lastName());
             u.setEmail(faker.internet().emailAddress());
-            u.setContrasenia("123456");
+
+            u.setPassword(passwordEncoder.encode("123456"));
+
             u.setTelefono("9" + faker.number().numberBetween(10000000, 99999999));
             u.setRol(roles.get(random.nextInt(roles.size())));
             u.setDireccionPrincipal(dir);
+
             usuarioRepository.save(u);
         }
         List<Usuario> usuarios = usuarioRepository.findAll();

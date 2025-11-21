@@ -1,10 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Rol;
-import com.example.demo.model.Usuario;
-import com.example.demo.service.UsuarioService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,11 +12,15 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
-import java.util.List;
-import java.util.Map;
+import com.example.demo.model.Rol;
+import com.example.demo.model.Usuario;
+import com.example.demo.service.UsuarioService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/v1/usuarios")
@@ -35,8 +37,9 @@ public class UsuarioController {
     @Operation(summary = "Listar todos los usuarios")
     public ResponseEntity<List<Usuario>> findAll() {
         List<Usuario> usuarios = usuarioService.findAll();
-        if (usuarios.isEmpty())
+        if (usuarios.isEmpty()) {
             return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok(usuarios);
     }
 
@@ -58,8 +61,8 @@ public class UsuarioController {
         usuario.setEmail((String) body.get("email"));
         usuario.setTelefono((String) body.get("telefono"));
 
-        String password = (String) body.get("contrasenia");
-        usuario.setContrasenia(passwordEncoder.encode(password));
+        String password = (String) body.get("password");
+        usuario.setPassword(password);
 
         Map<String, Object> rolMap = (Map<String, Object>) body.get("rol");
         Long idRol = Long.valueOf(rolMap.get("id_rol").toString());
@@ -91,8 +94,9 @@ public class UsuarioController {
     @Operation(summary = "Eliminar un usuario")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         Usuario usuario = usuarioService.findById(id);
-        if (usuario == null)
+        if (usuario == null) {
             return ResponseEntity.notFound().build();
+        }
         usuarioService.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -114,7 +118,7 @@ public class UsuarioController {
             return ResponseEntity.status(404).body("Correo no registrado");
         }
 
-        if (!passwordEncoder.matches(password, usuario.getContrasenia())) {
+        if (!passwordEncoder.matches(password, usuario.getPassword())) {
             return ResponseEntity.status(400).body("Contraseña incorrecta");
         }
 
