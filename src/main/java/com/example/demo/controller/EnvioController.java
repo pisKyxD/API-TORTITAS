@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/envios")
-@Tag(name = "Envíos", description = "Operaciones relacionadas con los envios de pedidos")
+@Tag(name = "Envios", description = "Operaciones relacionadas con los envios de pedidos")
 public class EnvioController {
 
     @Autowired

@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/categorias")
-@Tag(name = "Categorías", description = "Operaciones relacionadas con las categorias de productos")
+@Tag(name = "Categorias", description = "Operaciones relacionadas con las categorias de productos")
 public class CategoriaController {
 
     @Autowired
