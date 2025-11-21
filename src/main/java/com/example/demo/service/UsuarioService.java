@@ -8,10 +8,12 @@ import com.example.demo.repository.EnvioRepository;
 import com.example.demo.repository.PagoRepository;
 import com.example.demo.repository.PedidoRepository;
 import com.example.demo.repository.UsuarioRepository;
+
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -39,6 +41,10 @@ public class UsuarioService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    // =============================
+    // MÉTODOS BÁSICOS
+    // =============================
+
     public Usuario findById(Long id) {
         return usuarioRepository.findById(id).orElse(null);
     }
@@ -47,7 +53,9 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
 
+    // 🔥 CORREGIDO: encriptar contraseña ANTES de guardar 🔥
     public Usuario save(Usuario usuario) {
+        usuario.setContrasenia(passwordEncoder.encode(usuario.getContrasenia()));
         return usuarioRepository.save(usuario);
     }
 
@@ -105,6 +113,9 @@ public class UsuarioService {
         return null;
     }
 
+    // =============================
+    // BORRADO EN CASCADA
+    // =============================
     public void delete(Long id) {
 
         Usuario usuario = usuarioRepository.findById(id)
@@ -130,6 +141,9 @@ public class UsuarioService {
         usuarioRepository.delete(usuario);
     }
 
+    // =============================
+    // LOGIN
+    // =============================
     public Usuario findByEmail(String email) {
         return usuarioRepository.findByEmail(email);
     }

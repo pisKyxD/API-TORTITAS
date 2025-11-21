@@ -41,27 +41,27 @@ public class DireccionController {
     }
 
     @PostMapping
-    @Operation(summary = "Registrar una nueva dirección")
+    @Operation(summary = "Registrar una nueva direccion")
     public ResponseEntity<Direccion> save(@RequestBody Direccion direccion) {
         return ResponseEntity.status(201).body(direccionService.save(direccion));
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar una dirección")
+    @Operation(summary = "Actualizar una direccion")
     public ResponseEntity<Direccion> update(@PathVariable Long id, @RequestBody Direccion direccion) {
         Direccion updated = direccionService.update(id, direccion);
         return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 
     @PatchMapping("/{id}")
-    @Operation(summary = "Actualizar parcialmente una dirección")
+    @Operation(summary = "Actualizar parcialmente una direccion")
     public ResponseEntity<Direccion> patch(@PathVariable Long id, @RequestBody Direccion direccion) {
         Direccion patched = direccionService.patch(id, direccion);
         return patched != null ? ResponseEntity.ok(patched) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar una dirección")
+    @Operation(summary = "Eliminar una direccion")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         Direccion direccion = direccionService.findById(id);
         if (direccion == null) return ResponseEntity.notFound().build();

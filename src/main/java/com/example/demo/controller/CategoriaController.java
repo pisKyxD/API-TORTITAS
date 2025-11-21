@@ -20,14 +20,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/categorias")
-@Tag(name = "Categorías", description = "Operaciones relacionadas con las categorías de productos")
+@Tag(name = "Categorias", description = "Operaciones relacionadas con las categorias de productos")
 public class CategoriaController {
 
     @Autowired
     private CategoriaService categoriaService;
 
     @GetMapping
-    @Operation(summary = "Listar todas las categorías")
+    @Operation(summary = "Listar todas las categorias")
     public ResponseEntity<List<Categoria>> findAll() {
         List<Categoria> categorias = categoriaService.findAll();
         if (categorias.isEmpty()) return ResponseEntity.noContent().build();
@@ -35,34 +35,34 @@ public class CategoriaController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Buscar categoría por ID")
+    @Operation(summary = "Buscar categoria por ID")
     public ResponseEntity<Categoria> findById(@PathVariable Long id) {
         Categoria categoria = categoriaService.findById(id);
         return categoria != null ? ResponseEntity.ok(categoria) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    @Operation(summary = "Registrar una nueva categoría")
+    @Operation(summary = "Registrar una nueva categoria")
     public ResponseEntity<Categoria> save(@RequestBody Categoria categoria) {
         return ResponseEntity.status(201).body(categoriaService.save(categoria));
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar una categoría")
+    @Operation(summary = "Actualizar una categoria")
     public ResponseEntity<Categoria> update(@PathVariable Long id, @RequestBody Categoria categoria) {
         Categoria updated = categoriaService.update(id, categoria);
         return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 
     @PatchMapping("/{id}")
-    @Operation(summary = "Actualizar parcialmente una categoría")
+    @Operation(summary = "Actualizar parcialmente una categoria")
     public ResponseEntity<Categoria> patch(@PathVariable Long id, @RequestBody Categoria categoria) {
         Categoria patched = categoriaService.patch(id, categoria);
         return patched != null ? ResponseEntity.ok(patched) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar una categoría")
+    @Operation(summary = "Eliminar una categoria")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         Categoria categoria = categoriaService.findById(id);
         if (categoria == null) return ResponseEntity.notFound().build();

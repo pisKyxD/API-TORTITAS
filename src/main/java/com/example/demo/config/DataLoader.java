@@ -27,7 +27,7 @@ public class DataLoader {
 
                 System.out.println("Roles iniciales creados correctamente.");
             } else {
-                System.out.println("Roles ya existen, no se crearán datos iniciales.");
+                System.out.println("Roles ya existen, no se crearán datos inicials.");
             }
         };
     }

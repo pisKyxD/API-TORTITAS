@@ -64,7 +64,7 @@ public class CategoriaService {
 
     public void delete(Long id) {
         Categoria categoria = categoriaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+                .orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
         List<Producto> productos = categoria.getProductos();
         for (Producto producto : productos) {
             imagenRepository.deleteByProducto(producto);

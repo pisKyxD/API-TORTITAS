@@ -1,7 +1,8 @@
 package com.example.demo.model;
 
-
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,7 +22,7 @@ public class Categoria {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_categoria;
+    private Long idCategoria;
 
     @Column(nullable = false, length = 100)
     private String nombre_categoria;
@@ -30,5 +31,6 @@ public class Categoria {
     private String descripcion;
 
     @OneToMany(mappedBy = "categoria")
+    @JsonIgnore
     private List<Producto> productos;
 }

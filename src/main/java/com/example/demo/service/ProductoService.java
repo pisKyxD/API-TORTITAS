@@ -68,13 +68,20 @@ public class ProductoService {
         return null;
     }
 
-    @Transactional
     public void delete(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
         imagenRepository.deleteByProducto(producto);
         detallePedidoRepository.deleteByProducto(producto);
         productoRepository.delete(producto);
+    }
+
+    public List<Producto> findByCategoria(Long idCategoria) {
+        return productoRepository.findByCategoriaIdCategoria(idCategoria);
+    }
+
+    public List<Producto> findBySabor(Long idSabor) {
+        return productoRepository.findBySaborIdSabor(idSabor);
     }
 
 }

@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/imagenes")
-@Tag(name = "Imágenes", description = "Operaciones relacionadas con las imágenes de los productos")
+@Tag(name = "Imagenes", description = "Operaciones relacionadas con las imágenes de los productos")
 public class ImagenController {
 
     @Autowired

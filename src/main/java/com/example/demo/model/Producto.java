@@ -3,6 +3,8 @@ package com.example.demo.model;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -46,8 +48,10 @@ public class Producto {
     private Sabor sabor;
 
     @OneToMany(mappedBy = "producto")
+    @JsonIgnore
     private List<Imagen> imagenes;
 
     @OneToMany(mappedBy = "producto")
+    @JsonIgnore
     private List<DetallePedido> detalles;
 }
