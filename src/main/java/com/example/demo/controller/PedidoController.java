@@ -4,6 +4,8 @@ import com.example.demo.model.Pedido;
 import com.example.demo.service.PedidoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,10 +14,9 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/pedidos")
@@ -67,5 +68,16 @@ public class PedidoController {
         if (pedido == null) return ResponseEntity.notFound().build();
         pedidoService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/crear")
+    @Operation(summary = "Crear un pedido desde el carrito")
+    public ResponseEntity<?> crearPedido(@RequestBody Map<String, Object> data) {
+        try {
+            Pedido pedido = pedidoService.procesarPedidoCarrito(data);
+            return ResponseEntity.status(201).body(pedido);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
