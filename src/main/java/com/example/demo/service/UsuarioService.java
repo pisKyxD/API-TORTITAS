@@ -48,65 +48,85 @@ public class UsuarioService {
     }
 
     public Usuario save(Usuario usuario) {
-        usuario.setContrasenia(passwordEncoder.encode(usuario.getContrasenia()));
         return usuarioRepository.save(usuario);
     }
 
     public Usuario update(Long id, Usuario usuario) {
         Usuario usuarioToUpdate = usuarioRepository.findById(id).orElse(null);
+
         if (usuarioToUpdate != null) {
             usuarioToUpdate.setNombre(usuario.getNombre());
             usuarioToUpdate.setApellido(usuario.getApellido());
             usuarioToUpdate.setEmail(usuario.getEmail());
+
             if (usuario.getContrasenia() != null) {
                 usuarioToUpdate.setContrasenia(passwordEncoder.encode(usuario.getContrasenia()));
             }
+
             usuarioToUpdate.setTelefono(usuario.getTelefono());
             usuarioToUpdate.setRol(usuario.getRol());
             usuarioToUpdate.setDireccionPrincipal(usuario.getDireccionPrincipal());
+
             return usuarioRepository.save(usuarioToUpdate);
         }
+
         return null;
     }
 
     public Usuario patch(Long id, Usuario usuario) {
         Usuario usuarioToPatch = usuarioRepository.findById(id).orElse(null);
+
         if (usuarioToPatch != null) {
+
             if (usuario.getNombre() != null)
                 usuarioToPatch.setNombre(usuario.getNombre());
+
             if (usuario.getApellido() != null)
                 usuarioToPatch.setApellido(usuario.getApellido());
+
             if (usuario.getEmail() != null)
                 usuarioToPatch.setEmail(usuario.getEmail());
-            if (usuario.getContrasenia() != null) {
+
+            if (usuario.getContrasenia() != null)
                 usuarioToPatch.setContrasenia(passwordEncoder.encode(usuario.getContrasenia()));
-            }
+
             if (usuario.getTelefono() != null)
                 usuarioToPatch.setTelefono(usuario.getTelefono());
+
             if (usuario.getRol() != null)
                 usuarioToPatch.setRol(usuario.getRol());
+
             if (usuario.getDireccionPrincipal() != null)
                 usuarioToPatch.setDireccionPrincipal(usuario.getDireccionPrincipal());
+
             return usuarioRepository.save(usuarioToPatch);
         }
+
         return null;
     }
 
     public void delete(Long id) {
+
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
         direccionRepository.deleteByUsuario(usuario);
+
         List<Pedido> pedidos = pedidoRepository.findByUsuario(usuario);
+
         for (Pedido pedido : pedidos) {
+
             detallePedidoRepository.deleteByPedido(pedido);
-            if (pedido.getPago() != null) {
+
+            if (pedido.getPago() != null)
                 pagoRepository.deleteById(pedido.getPago().getId_pago());
-            }
-            if (pedido.getEnvio() != null) {
+
+            if (pedido.getEnvio() != null)
                 envioRepository.deleteById(pedido.getEnvio().getId_envio());
-            }
         }
+
         pedidoRepository.deleteByUsuario(usuario);
+
         usuarioRepository.delete(usuario);
     }
 
