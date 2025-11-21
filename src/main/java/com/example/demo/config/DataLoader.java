@@ -97,7 +97,7 @@ public class DataLoader implements CommandLineRunner {
         }
         List<Comuna> comunas = comunaRepository.findAll();
 
-        String[] rolesInit = { "ADMIN", "USUARIO", "TRABAJADOR" };
+        String[] rolesInit = { "ADMIN", "USUARIO"};
         for (String rol : rolesInit) {
             Rol r = new Rol();
             r.setNombre(rol);

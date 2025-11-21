@@ -5,17 +5,15 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.demo.model.Rol;
+import org.springframework.web.bind.annotation.RequestBody;
 import com.example.demo.model.Usuario;
 import com.example.demo.service.UsuarioService;
 
@@ -30,17 +28,11 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @GetMapping
     @Operation(summary = "Listar todos los usuarios")
     public ResponseEntity<List<Usuario>> findAll() {
         List<Usuario> usuarios = usuarioService.findAll();
-        if (usuarios.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(usuarios);
+        return usuarios.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(usuarios);
     }
 
     @GetMapping("/{id}")
@@ -53,27 +45,13 @@ public class UsuarioController {
     @PostMapping
     @Operation(summary = "Registrar un nuevo usuario")
     public ResponseEntity<Usuario> save(@RequestBody Map<String, Object> body) {
+        return ResponseEntity.status(201).body(usuarioService.saveFromBody(body));
+    }
 
-        Usuario usuario = new Usuario();
-
-        usuario.setNombre((String) body.get("nombre"));
-        usuario.setApellido((String) body.get("apellido"));
-        usuario.setEmail((String) body.get("email"));
-        usuario.setTelefono((String) body.get("telefono"));
-
-        String password = (String) body.get("password");
-        usuario.setPassword(password);
-
-        Map<String, Object> rolMap = (Map<String, Object>) body.get("rol");
-        Long idRol = Long.valueOf(rolMap.get("id_rol").toString());
-
-        Rol rol = new Rol();
-        rol.setId_rol(idRol);
-        usuario.setRol(rol);
-
-        usuario.setDireccionPrincipal(null);
-
-        return ResponseEntity.status(201).body(usuarioService.save(usuario));
+    @PostMapping("/login")
+    @Operation(summary = "Iniciar sesión")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
+        return usuarioService.login(body);
     }
 
     @PutMapping("/{id}")
@@ -93,35 +71,7 @@ public class UsuarioController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar un usuario")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        Usuario usuario = usuarioService.findById(id);
-        if (usuario == null) {
-            return ResponseEntity.notFound().build();
-        }
-        usuarioService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/login")
-    @Operation(summary = "Iniciar sesión de un usuario")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
-
-        String email = body.get("email");
-        String password = body.get("password");
-
-        if (email == null || password == null) {
-            return ResponseEntity.badRequest().body("Faltan campos");
-        }
-
-        Usuario usuario = usuarioService.findByEmail(email);
-
-        if (usuario == null) {
-            return ResponseEntity.status(404).body("Correo no registrado");
-        }
-
-        if (!passwordEncoder.matches(password, usuario.getPassword())) {
-            return ResponseEntity.status(400).body("Contraseña incorrecta");
-        }
-
-        return ResponseEntity.ok(usuario);
+        boolean eliminado = usuarioService.deleteUsuario(id);
+        return eliminado ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 }
