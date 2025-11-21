@@ -52,6 +52,7 @@ public class UsuarioService {
     public List<Usuario> findAll() {
         return usuarioRepository.findAll();
     }
+
     public Usuario save(Usuario usuario) {
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         return usuarioRepository.save(usuario);
@@ -72,6 +73,16 @@ public class UsuarioService {
             return usuarioRepository.save(usuarioToUpdate);
         }
         return null;
+    }
+
+    public Usuario actualizarDireccionPrincipal(Long idUsuario, Long idDireccion) {
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
+        if (usuario == null)
+            return null;
+        var direccion = new com.example.demo.model.Direccion();
+        direccion.setId_direccion(idDireccion);
+        usuario.setDireccionPrincipal(direccion);
+        return usuarioRepository.save(usuario);
     }
 
     public Usuario patch(Long id, Usuario usuario) {

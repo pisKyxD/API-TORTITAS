@@ -68,6 +68,16 @@ public class UsuarioController {
         return patched != null ? ResponseEntity.ok(patched) : ResponseEntity.notFound().build();
     }
 
+    @PatchMapping("/{id}/direccion-principal")
+    @Operation(summary = "Actualizar direccion principal del usuario")
+    public ResponseEntity<Usuario> updateDireccionPrincipal(
+            @PathVariable Long id,
+            @RequestBody Map<String, Long> body) {
+        Long idDireccion = body.get("id_direccion");
+        Usuario updated = usuarioService.actualizarDireccionPrincipal(id, idDireccion);
+        return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
+    }
+
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar un usuario")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
