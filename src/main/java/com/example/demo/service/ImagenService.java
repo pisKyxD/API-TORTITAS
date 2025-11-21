@@ -36,13 +36,36 @@ public class ImagenService {
     }
 
     public String uploadImage(MultipartFile file) throws IOException {
-
         Map uploadResult = cloudinary.uploader().upload(
                 file.getBytes(),
                 ObjectUtils.asMap("resource_type", "auto")
         );
-
         return uploadResult.get("secure_url").toString();
+    }
+
+    public Imagen guardarImagen(MultipartFile file, Long productoId) {
+
+        try {
+            Map uploadResult = cloudinary.uploader().upload(
+                    file.getBytes(),
+                    ObjectUtils.asMap("resource_type", "auto")
+            );
+
+            String imageUrl = uploadResult.get("secure_url").toString();
+
+            Imagen imagen = new Imagen();
+            imagen.setUrl(imageUrl);
+
+            com.example.demo.model.Producto p = new com.example.demo.model.Producto();
+            p.setId_producto(productoId);
+            imagen.setProducto(p);
+
+            return imagenRepository.save(imagen);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public Imagen update(Long id, Imagen imagen) {
