@@ -34,34 +34,34 @@ public class RegionController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Buscar región por ID")
+    @Operation(summary = "Buscar region por ID")
     public ResponseEntity<Region> findById(@PathVariable Long id) {
         Region region = regionService.findById(id);
         return region != null ? ResponseEntity.ok(region) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    @Operation(summary = "Registrar una nueva región")
+    @Operation(summary = "Registrar una nueva region")
     public ResponseEntity<Region> save(@RequestBody Region region) {
         return ResponseEntity.status(201).body(regionService.save(region));
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar una región")
+    @Operation(summary = "Actualizar una region")
     public ResponseEntity<Region> update(@PathVariable Long id, @RequestBody Region region) {
         Region updated = regionService.update(id, region);
         return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 
     @PatchMapping("/{id}")
-    @Operation(summary = "Actualizar parcialmente una región")
+    @Operation(summary = "Actualizar parcialmente una region")
     public ResponseEntity<Region> patch(@PathVariable Long id, @RequestBody Region region) {
         Region patched = regionService.patch(id, region);
         return patched != null ? ResponseEntity.ok(patched) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar una región")
+    @Operation(summary = "Eliminar una region")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         Region region = regionService.findById(id);
         if (region == null) return ResponseEntity.notFound().build();

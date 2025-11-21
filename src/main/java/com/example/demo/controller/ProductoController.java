@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/productos")
-@Tag(name = "Productos", description = "Operaciones relacionadas con los productos del catálogo")
+@Tag(name = "Productos", description = "Operaciones relacionadas con los productos del catalogo")
 public class ProductoController {
 
     @Autowired
@@ -29,7 +29,8 @@ public class ProductoController {
     @Operation(summary = "Listar todos los productos")
     public ResponseEntity<List<Producto>> findAll() {
         List<Producto> productos = productoService.findAll();
-        if (productos.isEmpty()) return ResponseEntity.noContent().build();
+        if (productos.isEmpty())
+            return ResponseEntity.noContent().build();
         return ResponseEntity.ok(productos);
     }
 
@@ -38,6 +39,24 @@ public class ProductoController {
     public ResponseEntity<Producto> findById(@PathVariable Long id) {
         Producto producto = productoService.findById(id);
         return producto != null ? ResponseEntity.ok(producto) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/sabor/{id}")
+    @Operation(summary = "Buscar productos por sabor")
+    public ResponseEntity<List<Producto>> findBySabor(@PathVariable Long id) {
+        List<Producto> productos = productoService.findBySabor(id);
+        if (productos.isEmpty())
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(productos);
+    }
+
+    @GetMapping("/categoria/{id}")
+    @Operation(summary = "Buscar productos por categoria")
+    public ResponseEntity<List<Producto>> findByCategoria(@PathVariable Long id) {
+        List<Producto> productos = productoService.findByCategoria(id);
+        if (productos.isEmpty())
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(productos);
     }
 
     @PostMapping
@@ -64,7 +83,8 @@ public class ProductoController {
     @Operation(summary = "Eliminar un producto")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         Producto producto = productoService.findById(id);
-        if (producto == null) return ResponseEntity.notFound().build();
+        if (producto == null)
+            return ResponseEntity.notFound().build();
         productoService.delete(id);
         return ResponseEntity.noContent().build();
     }
