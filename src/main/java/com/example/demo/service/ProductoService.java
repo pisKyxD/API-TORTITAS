@@ -77,11 +77,11 @@ public class ProductoService {
     }
 
     public List<Producto> findByCategoria(Long idCategoria) {
-        return productoRepository.findByCategoria_Id_categoria(idCategoria);
+        return productoRepository.findByCategoriaIdCategoria(idCategoria);
     }
 
     public List<Producto> findBySabor(Long idSabor) {
-        return productoRepository.findBySabor_Id_sabor(idSabor);
+        return productoRepository.findBySaborIdSabor(idSabor);
     }
 
 }
