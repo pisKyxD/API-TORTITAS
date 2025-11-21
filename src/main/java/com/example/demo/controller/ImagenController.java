@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 
@@ -29,7 +31,8 @@ public class ImagenController {
     @Operation(summary = "Listar todas las imágenes")
     public ResponseEntity<List<Imagen>> findAll() {
         List<Imagen> imagenes = imagenService.findAll();
-        if (imagenes.isEmpty()) return ResponseEntity.noContent().build();
+        if (imagenes.isEmpty())
+            return ResponseEntity.noContent().build();
         return ResponseEntity.ok(imagenes);
     }
 
@@ -44,6 +47,17 @@ public class ImagenController {
     @Operation(summary = "Registrar una nueva imagen")
     public ResponseEntity<Imagen> save(@RequestBody Imagen imagen) {
         return ResponseEntity.status(201).body(imagenService.save(imagen));
+    }
+
+    @PostMapping("/upload")
+    @Operation(summary = "Subir imagen a Cloudinary")
+    public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file) {
+        try {
+            String url = imagenService.uploadImage(file);
+            return ResponseEntity.ok().body(url);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al subir la imagen: " + e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
@@ -64,7 +78,8 @@ public class ImagenController {
     @Operation(summary = "Eliminar una imagen")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         Imagen imagen = imagenService.findById(id);
-        if (imagen == null) return ResponseEntity.notFound().build();
+        if (imagen == null)
+            return ResponseEntity.notFound().build();
         imagenService.delete(id);
         return ResponseEntity.noContent().build();
     }

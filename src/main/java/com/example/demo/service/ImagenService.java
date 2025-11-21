@@ -1,11 +1,17 @@
 package com.example.demo.service;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.example.demo.model.Imagen;
 import com.example.demo.repository.ImagenRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -13,6 +19,9 @@ public class ImagenService {
 
     @Autowired
     private ImagenRepository imagenRepository;
+
+    @Autowired
+    private Cloudinary cloudinary;
 
     public Imagen findById(Long id) {
         return imagenRepository.findById(id).orElse(null);
@@ -24,6 +33,16 @@ public class ImagenService {
 
     public Imagen save(Imagen imagen) {
         return imagenRepository.save(imagen);
+    }
+
+    public String uploadImage(MultipartFile file) throws IOException {
+
+        Map uploadResult = cloudinary.uploader().upload(
+                file.getBytes(),
+                ObjectUtils.asMap("resource_type", "auto")
+        );
+
+        return uploadResult.get("secure_url").toString();
     }
 
     public Imagen update(Long id, Imagen imagen) {
