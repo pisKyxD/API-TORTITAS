@@ -2,35 +2,74 @@ package com.example.demo.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.boot.CommandLineRunner;
 
-import com.example.demo.model.*;
-import com.example.demo.repository.*;
+import com.example.demo.model.Categoria;
+import com.example.demo.model.Comuna;
+import com.example.demo.model.DetallePedido;
+import com.example.demo.model.Direccion;
+import com.example.demo.model.Envio;
+import com.example.demo.model.Imagen;
+import com.example.demo.model.Pago;
+import com.example.demo.model.Pedido;
+import com.example.demo.model.Producto;
+import com.example.demo.model.Region;
+import com.example.demo.model.Rol;
+import com.example.demo.model.Sabor;
+import com.example.demo.model.Usuario;
+import com.example.demo.repository.CategoriaRepository;
+import com.example.demo.repository.ComunaRepository;
+import com.example.demo.repository.DetallePedidoRepository;
+import com.example.demo.repository.DireccionRepository;
+import com.example.demo.repository.EnvioRepository;
+import com.example.demo.repository.ImagenRepository;
+import com.example.demo.repository.PagoRepository;
+import com.example.demo.repository.PedidoRepository;
+import com.example.demo.repository.ProductoRepository;
+import com.example.demo.repository.RegionRepository;
+import com.example.demo.repository.RolRepository;
+import com.example.demo.repository.SaborRepository;
+import com.example.demo.repository.UsuarioRepository;
+
+import org.springframework.boot.CommandLineRunner;
 
 import net.datafaker.Faker;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Random;
 
 @Component
 public class DataLoader implements CommandLineRunner {
 
-    @Autowired private RegionRepository regionRepository;
-    @Autowired private ComunaRepository comunaRepository;
-    @Autowired private DireccionRepository direccionRepository;
+    @Autowired
+    private RegionRepository regionRepository;
+    @Autowired
+    private ComunaRepository comunaRepository;
+    @Autowired
+    private DireccionRepository direccionRepository;
 
-    @Autowired private RolRepository rolRepository;
-    @Autowired private UsuarioRepository usuarioRepository;
+    @Autowired
+    private RolRepository rolRepository;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
-    @Autowired private CategoriaRepository categoriaRepository;
-    @Autowired private SaborRepository saborRepository;
-    @Autowired private ProductoRepository productoRepository;
-    @Autowired private ImagenRepository imagenRepository;
+    @Autowired
+    private CategoriaRepository categoriaRepository;
+    @Autowired
+    private SaborRepository saborRepository;
+    @Autowired
+    private ProductoRepository productoRepository;
+    @Autowired
+    private ImagenRepository imagenRepository;
 
-    @Autowired private PedidoRepository pedidoRepository;
-    @Autowired private DetallePedidoRepository detallePedidoRepository;
-    @Autowired private PagoRepository pagoRepository;
-    @Autowired private EnvioRepository envioRepository;
+    @Autowired
+    private PedidoRepository pedidoRepository;
+    @Autowired
+    private DetallePedidoRepository detallePedidoRepository;
+    @Autowired
+    private PagoRepository pagoRepository;
+    @Autowired
+    private EnvioRepository envioRepository;
 
     private Faker faker = new Faker();
     private Random random = new Random();
@@ -38,9 +77,6 @@ public class DataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        // =============================
-        // REGIONES
-        // =============================
         for (int i = 1; i <= 3; i++) {
             Region r = new Region();
             r.setNombre_region(faker.address().state());
@@ -48,9 +84,6 @@ public class DataLoader implements CommandLineRunner {
         }
         List<Region> regiones = regionRepository.findAll();
 
-        // =============================
-        // COMUNAS
-        // =============================
         for (int i = 1; i <= 5; i++) {
             Comuna c = new Comuna();
             c.setNombre_comuna(faker.address().city());
@@ -59,9 +92,6 @@ public class DataLoader implements CommandLineRunner {
         }
         List<Comuna> comunas = comunaRepository.findAll();
 
-        // =============================
-        // ROLES
-        // =============================
         String[] rolesInit = { "ADMIN", "USUARIO", "TRABAJADOR" };
         for (String rol : rolesInit) {
             Rol r = new Rol();
@@ -70,12 +100,8 @@ public class DataLoader implements CommandLineRunner {
         }
         List<Rol> roles = rolRepository.findAll();
 
-        // =============================
-        // USUARIOS + DIRECCIONES
-        // =============================
         for (int i = 1; i <= 5; i++) {
 
-            // Dirección principal
             Direccion dir = new Direccion();
             dir.setCalle(faker.address().streetName());
             dir.setNumero(String.valueOf(faker.number().numberBetween(100, 999)));
@@ -83,7 +109,6 @@ public class DataLoader implements CommandLineRunner {
             dir.setComuna(comunas.get(random.nextInt(comunas.size())));
             direccionRepository.save(dir);
 
-            // Usuario
             Usuario u = new Usuario();
             u.setNombre(faker.name().firstName());
             u.setApellido(faker.name().lastName());
@@ -96,9 +121,6 @@ public class DataLoader implements CommandLineRunner {
         }
         List<Usuario> usuarios = usuarioRepository.findAll();
 
-        // =============================
-        // CATEGORÍAS
-        // =============================
         for (int i = 1; i <= 3; i++) {
             Categoria c = new Categoria();
             c.setNombre_categoria(faker.commerce().department());
@@ -107,9 +129,6 @@ public class DataLoader implements CommandLineRunner {
         }
         List<Categoria> categorias = categoriaRepository.findAll();
 
-        // =============================
-        // SABORES
-        // =============================
         for (int i = 1; i <= 3; i++) {
             Sabor s = new Sabor();
             s.setNombre_sabor(faker.food().ingredient());
@@ -117,9 +136,6 @@ public class DataLoader implements CommandLineRunner {
         }
         List<Sabor> sabores = saborRepository.findAll();
 
-        // =============================
-        // PRODUCTOS
-        // =============================
         for (int i = 1; i <= 6; i++) {
             Producto p = new Producto();
             p.setNombre(faker.commerce().productName());
@@ -132,9 +148,6 @@ public class DataLoader implements CommandLineRunner {
         }
         List<Producto> productos = productoRepository.findAll();
 
-        // =============================
-        // IMÁGENES
-        // =============================
         for (Producto p : productos) {
             for (int i = 1; i <= 2; i++) {
                 Imagen img = new Imagen();
@@ -144,14 +157,10 @@ public class DataLoader implements CommandLineRunner {
             }
         }
 
-        // =============================
-        // PEDIDOS + PAGO + ENVÍO + DETALLE
-        // =============================
         for (int i = 1; i <= 5; i++) {
 
             Usuario user = usuarios.get(random.nextInt(usuarios.size()));
 
-            // PAGO
             Pago pago = new Pago();
             pago.setMetodo_pago("TARJETA");
             pago.setEstado_pago("COMPLETADO");
@@ -159,15 +168,14 @@ public class DataLoader implements CommandLineRunner {
             pago.setFecha_pago(LocalDateTime.now());
             pagoRepository.save(pago);
 
-            // ENVIO
             Envio envio = new Envio();
-            envio.setDireccion_envio(user.getDireccionPrincipal().getCalle() + " " + user.getDireccionPrincipal().getNumero());
+            envio.setDireccion_envio(
+                    user.getDireccionPrincipal().getCalle() + " " + user.getDireccionPrincipal().getNumero());
             envio.setEstado_envio("EN CAMINO");
             envio.setFecha_envio(LocalDateTime.now());
             envio.setDireccion(user.getDireccionPrincipal());
             envioRepository.save(envio);
 
-            // PEDIDO
             Pedido pedido = new Pedido();
             pedido.setEstado("PAGADO");
             pedido.setFecha_pedido(LocalDateTime.now());
@@ -177,7 +185,6 @@ public class DataLoader implements CommandLineRunner {
             pedido.setEnvio(envio);
             pedidoRepository.save(pedido);
 
-            // DETALLE
             for (int j = 1; j <= 2; j++) {
                 DetallePedido det = new DetallePedido();
                 det.setPedido(pedido);
@@ -191,6 +198,6 @@ public class DataLoader implements CommandLineRunner {
             }
         }
 
-        System.out.println(">>> DataLoader creado exitosamente (estilo ReVive).");
+        System.out.println("DataLoader creado exitosamente");
     }
 }
