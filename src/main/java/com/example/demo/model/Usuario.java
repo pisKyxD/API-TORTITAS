@@ -2,6 +2,7 @@ package com.example.demo.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
@@ -51,8 +52,10 @@ public class Usuario {
     private Direccion direccionPrincipal;
 
     @OneToMany(mappedBy = "usuario")
+    @JsonIgnore
     private List<Direccion> direcciones;
 
     @OneToMany(mappedBy = "usuario")
+    @JsonIgnore
     private List<Pedido> pedidos;
 }

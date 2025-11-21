@@ -2,6 +2,8 @@ package com.example.demo.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,5 +28,6 @@ public class Sabor {
     private String nombre_sabor;
 
     @OneToMany(mappedBy = "sabor")
+    @JsonIgnore
     private List<Producto> productos;
 }
