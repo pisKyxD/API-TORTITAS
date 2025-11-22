@@ -140,7 +140,8 @@ public class PedidoService {
         BigDecimal total = BigDecimal.ZERO;
 
         for (Map<String, Object> item : items) {
-            Long idProducto = Long.valueOf(item.get("idProducto").toString());
+
+            Long idProducto = Long.valueOf(item.get("id_producto").toString());
             int cantidad = Integer.parseInt(item.get("cantidad").toString());
 
             Producto producto = productoRepository.findById(idProducto)
@@ -158,9 +159,11 @@ public class PedidoService {
             detalle.setProducto(producto);
             detalle.setCantidad(cantidad);
             detalle.setPrecio_unitario(producto.getPrecio());
+
             detallePedidoRepository.save(detalle);
 
-            total = total.add(producto.getPrecio().multiply(BigDecimal.valueOf(cantidad)));
+            total = total.add(
+                    producto.getPrecio().multiply(BigDecimal.valueOf(cantidad)));
         }
 
         pedido.setTotal(total);
