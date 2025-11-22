@@ -1,5 +1,7 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,6 +27,7 @@ public class Imagen {
     private String url;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "id_producto")
     private Producto producto;
 }

@@ -48,7 +48,6 @@ public class Producto {
     private Sabor sabor;
 
     @OneToMany(mappedBy = "producto")
-    @JsonIgnore
     private List<Imagen> imagenes;
 
     @OneToMany(mappedBy = "producto")
