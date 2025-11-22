@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.model.Direccion;
+import com.example.demo.model.Usuario;
 import com.example.demo.repository.DireccionRepository;
 import com.example.demo.repository.EnvioRepository;
+import com.example.demo.repository.UsuarioRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -21,6 +23,9 @@ public class DireccionService {
     @Autowired
     private EnvioRepository envioRepository;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     public Direccion findById(Long id) {
         return direccionRepository.findById(id).orElse(null);
     }
@@ -30,7 +35,9 @@ public class DireccionService {
     }
 
     public List<Direccion> findByUsuarioId(Long idUsuario) {
-        return direccionRepository.findByUsuarioId(idUsuario);
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return direccionRepository.findByUsuario(usuario);
     }
 
     public Direccion save(Direccion direccion) {
@@ -74,5 +81,4 @@ public class DireccionService {
         envioRepository.deleteByDireccion(direccion);
         direccionRepository.delete(direccion);
     }
-
 }
