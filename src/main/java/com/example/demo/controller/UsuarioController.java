@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import com.example.demo.model.Direccion;
 import com.example.demo.model.Usuario;
+import com.example.demo.service.DireccionService;
 import com.example.demo.service.UsuarioService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,6 +30,9 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private DireccionService direccionService;
 
     @GetMapping
     @Operation(summary = "Listar todos los usuarios")
@@ -49,7 +55,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    @Operation(summary = "Iniciar sesión")
+    @Operation(summary = "Iniciar sesiÃ³n")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
         return usuarioService.login(body);
     }
@@ -76,6 +82,15 @@ public class UsuarioController {
         Long idDireccion = body.get("id_direccion");
         Usuario updated = usuarioService.actualizarDireccionPrincipal(id, idDireccion);
         return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{id}/direcciones")
+    @Operation(summary = "Listar direcciones del usuario")
+    public ResponseEntity<List<Direccion>> getDireccionesByUsuario(@PathVariable Long id) {
+        List<Direccion> direcciones = direccionService.findByUsuarioId(id);
+        return direcciones.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(direcciones);
     }
 
     @DeleteMapping("/{id}")

@@ -1,13 +1,15 @@
 package com.example.demo.service;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.example.demo.model.Direccion;
 import com.example.demo.repository.DireccionRepository;
 import com.example.demo.repository.EnvioRepository;
 
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
 @Transactional
@@ -25,6 +27,10 @@ public class DireccionService {
 
     public List<Direccion> findAll() {
         return direccionRepository.findAll();
+    }
+
+    public List<Direccion> findByUsuarioId(Long idUsuario) {
+        return direccionRepository.findByUsuarioId(idUsuario);
     }
 
     public Direccion save(Direccion direccion) {

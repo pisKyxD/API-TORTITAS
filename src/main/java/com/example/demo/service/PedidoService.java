@@ -1,5 +1,13 @@
 package com.example.demo.service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.example.demo.model.DetallePedido;
 import com.example.demo.model.Envio;
 import com.example.demo.model.Pago;
@@ -12,13 +20,8 @@ import com.example.demo.repository.PagoRepository;
 import com.example.demo.repository.PedidoRepository;
 import com.example.demo.repository.ProductoRepository;
 import com.example.demo.repository.UsuarioRepository;
+
 import jakarta.transaction.Transactional;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
@@ -104,8 +107,8 @@ public class PedidoService {
         Long idUsuario = Long.valueOf(data.get("idUsuario").toString());
         String direccionEnvio = data.get("direccionEnvio").toString();
         String metodoPago = data.get("metodoPago").toString();
-        List<Map<String, Object>> items = (List<Map<String, Object>>) data.get("items");
 
+        List<Map<String, Object>> items = (List<Map<String, Object>>) data.get("items");
         if (items == null || items.isEmpty()) {
             throw new RuntimeException("El pedido no contiene productos.");
         }
@@ -126,17 +129,17 @@ public class PedidoService {
         envio.setFecha_envio(LocalDateTime.now());
         envioRepository.save(envio);
 
-        BigDecimal total = BigDecimal.ZERO;
-
         Pedido pedido = new Pedido();
         pedido.setFecha_pedido(LocalDateTime.now());
         pedido.setEstado("PENDIENTE");
         pedido.setUsuario(usuario);
         pedido.setPago(pago);
         pedido.setEnvio(envio);
+        pedido = pedidoRepository.save(pedido);
+
+        BigDecimal total = BigDecimal.ZERO;
 
         for (Map<String, Object> item : items) {
-
             Long idProducto = Long.valueOf(item.get("idProducto").toString());
             int cantidad = Integer.parseInt(item.get("cantidad").toString());
 
@@ -150,30 +153,18 @@ public class PedidoService {
             producto.setStock(producto.getStock() - cantidad);
             productoRepository.save(producto);
 
-            total = total.add(producto.getPrecio().multiply(BigDecimal.valueOf(cantidad)));
-        }
-
-        pedido.setTotal(total);
-
-        pedido = pedidoRepository.save(pedido);
-
-        for (Map<String, Object> item : items) {
-            Long idProducto = Long.valueOf(item.get("idProducto").toString());
-            int cantidad = Integer.parseInt(item.get("cantidad").toString());
-
-            Producto producto = productoRepository.findById(idProducto)
-                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-
             DetallePedido detalle = new DetallePedido();
             detalle.setPedido(pedido);
             detalle.setProducto(producto);
             detalle.setCantidad(cantidad);
             detalle.setPrecio_unitario(producto.getPrecio());
             detallePedidoRepository.save(detalle);
+
+            total = total.add(producto.getPrecio().multiply(BigDecimal.valueOf(cantidad)));
         }
 
-        pago.setMonto(total);
-        pagoRepository.save(pago);
+        pedido.setTotal(total);
+        pedido = pedidoRepository.save(pedido);
 
         return pedido;
     }
