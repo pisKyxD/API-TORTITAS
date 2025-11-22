@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -76,6 +77,19 @@ public class ImagenController {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Error interno del servidor");
+        }
+    }
+    // por las dudas
+    @PostMapping(value = "/upload/{idProducto}", consumes = { "multipart/form-data" })
+    @Operation(summary = "Subir imagen WEBP a Cloudinary y asociarla al producto")
+    public ResponseEntity<Imagen> uploadImagen(
+            @PathVariable Long idProducto,
+            @RequestPart("file") MultipartFile file) {
+        try {
+            Imagen imagen = imagenService.guardarImagen(file, idProducto);
+            return ResponseEntity.status(201).body(imagen);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
         }
     }
 
