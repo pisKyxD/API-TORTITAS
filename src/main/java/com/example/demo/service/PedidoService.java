@@ -105,16 +105,17 @@ public class PedidoService {
     public Pedido procesarPedidoCarrito(Map<String, Object> data) {
 
         Long idUsuario = Long.valueOf(data.get("idUsuario").toString());
-        String direccionEnvio = data.get("direccionEnvio").toString();
-        String metodoPago = data.get("metodoPago").toString();
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        String direccionEnvio = (String) data.get("direccionEnvio");
+        String metodoPago = (String) data.get("metodoPago");
 
         List<Map<String, Object>> items = (List<Map<String, Object>>) data.get("items");
+
         if (items == null || items.isEmpty()) {
             throw new RuntimeException("El pedido no contiene productos.");
         }
-
-        Usuario usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         Pago pago = new Pago();
         pago.setMetodo_pago(metodoPago);
@@ -135,20 +136,22 @@ public class PedidoService {
         pedido.setUsuario(usuario);
         pedido.setPago(pago);
         pedido.setEnvio(envio);
+
         pedido = pedidoRepository.save(pedido);
 
         BigDecimal total = BigDecimal.ZERO;
 
         for (Map<String, Object> item : items) {
 
-            Long idProducto = Long.valueOf(item.get("id_producto").toString());
+            Long idProducto = Long.valueOf(item.get("idProducto").toString());
+
             int cantidad = Integer.parseInt(item.get("cantidad").toString());
 
             Producto producto = productoRepository.findById(idProducto)
                     .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
             if (producto.getStock() < cantidad) {
-                throw new RuntimeException("No hay stock suficiente para: " + producto.getNombre());
+                throw new RuntimeException("Stock insuficiente para: " + producto.getNombre());
             }
 
             producto.setStock(producto.getStock() - cantidad);
@@ -162,13 +165,11 @@ public class PedidoService {
 
             detallePedidoRepository.save(detalle);
 
-            total = total.add(
-                    producto.getPrecio().multiply(BigDecimal.valueOf(cantidad)));
+            total = total.add(producto.getPrecio().multiply(BigDecimal.valueOf(cantidad)));
         }
-
+        
         pedido.setTotal(total);
-        pedido = pedidoRepository.save(pedido);
 
-        return pedido;
+        return pedidoRepository.save(pedido);
     }
 }
