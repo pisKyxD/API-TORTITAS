@@ -104,83 +104,87 @@ public class PedidoService {
 
     public Pedido procesarPedidoCarrito(Map<String, Object> data) {
 
-        Long idUsuario = Long.valueOf(data.get("idUsuario").toString());
-        Usuario usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    Long idUsuario = Long.valueOf(data.get("idUsuario").toString());
+    Usuario usuario = usuarioRepository.findById(idUsuario)
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        String direccionEnvio = data.get("direccionEnvio").toString();
-        String metodoPago = data.get("metodoPago").toString();
+    String direccionEnvio = data.get("direccionEnvio").toString();
+    String metodoPago = data.get("metodoPago").toString();
+    String tipoEntrega = data.get("tipoEntrega").toString();
 
-        List<Map<String, Object>> items = (List<Map<String, Object>>) data.get("items");
-        if (items == null || items.isEmpty()) {
-            throw new RuntimeException("El pedido no contiene productos.");
-        }
+    List<Map<String, Object>> items = (List<Map<String, Object>>) data.get("items");
+    if (items == null || items.isEmpty()) {
+        throw new RuntimeException("El pedido no contiene productos.");
+    }
 
-        Pago pago = new Pago();
-        pago.setMetodo_pago(metodoPago);
-        pago.setEstado_pago("PENDIENTE");
-        pago.setMonto(BigDecimal.ZERO);
-        pago.setFecha_pago(LocalDateTime.now());
-        pagoRepository.save(pago);
+    Pago pago = new Pago();
+    pago.setMetodo_pago(metodoPago);
+    pago.setEstado_pago("PENDIENTE");
+    pago.setMonto(BigDecimal.ZERO);
+    pago.setFecha_pago(LocalDateTime.now());
+    pagoRepository.save(pago);
 
-        Envio envio = new Envio();
+    Envio envio = null;
+
+    if (tipoEntrega.equalsIgnoreCase("DOMICILIO")) {
+        envio = new Envio();
         envio.setDireccion_envio(direccionEnvio);
         envio.setEstado_envio("PENDIENTE");
         envio.setFecha_envio(LocalDateTime.now());
         envioRepository.save(envio);
-
-        BigDecimal total = BigDecimal.ZERO;
-
-        Pedido pedido = new Pedido();
-        pedido.setFecha_pedido(LocalDateTime.now());
-        pedido.setEstado("PENDIENTE");
-        pedido.setUsuario(usuario);
-        pedido.setPago(pago);
-        pedido.setEnvio(envio);
-
-        for (Map<String, Object> item : items) {
-
-            Long idProducto = Long.valueOf(item.get("idProducto").toString());
-            int cantidad = Integer.parseInt(item.get("cantidad").toString());
-
-            Producto producto = productoRepository.findById(idProducto)
-                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-
-            if (producto.getStock() < cantidad) {
-                throw new RuntimeException("No hay stock suficiente para: " + producto.getNombre());
-            }
-
-            producto.setStock(producto.getStock() - cantidad);
-            productoRepository.save(producto);
-
-            BigDecimal subtotal = producto.getPrecio().multiply(BigDecimal.valueOf(cantidad));
-            total = total.add(subtotal);
-        }
-
-        pago.setMonto(total);
-        pagoRepository.save(pago);
-
-        pedido.setTotal(total);
-        pedido = pedidoRepository.save(pedido);
-
-        for (Map<String, Object> item : items) {
-
-            Long idProducto = Long.valueOf(item.get("idProducto").toString());
-            int cantidad = Integer.parseInt(item.get("cantidad").toString());
-
-            Producto producto = productoRepository.findById(idProducto)
-                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-
-            DetallePedido detalle = new DetallePedido();
-            detalle.setPedido(pedido);
-            detalle.setProducto(producto);
-            detalle.setCantidad(cantidad);
-            detalle.setPrecio_unitario(producto.getPrecio());
-
-            detallePedidoRepository.save(detalle);
-        }
-
-        return pedido;
     }
 
+    BigDecimal total = BigDecimal.ZERO;
+
+    Pedido pedido = new Pedido();
+    pedido.setFecha_pedido(LocalDateTime.now());
+    pedido.setEstado("PENDIENTE");
+    pedido.setUsuario(usuario);
+    pedido.setPago(pago);
+    pedido.setEnvio(envio);
+
+    for (Map<String, Object> item : items) {
+
+        Long idProducto = Long.valueOf(item.get("idProducto").toString());
+        int cantidad = Integer.parseInt(item.get("cantidad").toString());
+
+        Producto producto = productoRepository.findById(idProducto)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        if (producto.getStock() < cantidad) {
+            throw new RuntimeException("No hay stock suficiente para: " + producto.getNombre());
+        }
+
+        producto.setStock(producto.getStock() - cantidad);
+        productoRepository.save(producto);
+
+        BigDecimal subtotal = producto.getPrecio().multiply(BigDecimal.valueOf(cantidad));
+        total = total.add(subtotal);
+    }
+
+    pago.setMonto(total);
+    pagoRepository.save(pago);
+
+    pedido.setTotal(total);
+    pedido = pedidoRepository.save(pedido);
+
+    for (Map<String, Object> item : items) {
+
+        Long idProducto = Long.valueOf(item.get("idProducto").toString());
+        int cantidad = Integer.parseInt(item.get("cantidad").toString());
+
+        Producto producto = productoRepository.findById(idProducto)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        DetallePedido detalle = new DetallePedido();
+        detalle.setPedido(pedido);
+        detalle.setProducto(producto);
+        detalle.setCantidad(cantidad);
+        detalle.setPrecio_unitario(producto.getPrecio());
+
+        detallePedidoRepository.save(detalle);
+    }
+
+    return pedido;
+}
 }
