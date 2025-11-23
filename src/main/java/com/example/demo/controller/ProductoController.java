@@ -62,7 +62,9 @@ public class ProductoController {
     @PostMapping
     @Operation(summary = "Registrar un nuevo producto")
     public ResponseEntity<Producto> save(@RequestBody Producto producto) {
-        return ResponseEntity.status(201).body(productoService.save(producto));
+        Producto guardado = productoService.save(producto);
+        Producto completo = productoService.findById(guardado.getId_producto());
+        return ResponseEntity.status(201).body(completo);
     }
 
     @PutMapping("/{id}")
