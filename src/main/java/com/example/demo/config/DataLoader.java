@@ -215,6 +215,6 @@ public class DataLoader implements CommandLineRunner {
             }
         }
 
-        System.out.println("🔥 DataLoader COMPLETADO correctamente 🔥");
+        System.out.println("DataLoader completado correctamente");
     }
 }
