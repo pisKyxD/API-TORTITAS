@@ -155,21 +155,29 @@ public class UsuarioService {
 
     public boolean deleteUsuario(Long id) {
         Usuario usuario = usuarioRepository.findById(id).orElse(null);
-        if (usuario == null) {
+        if (usuario == null)
             return false;
-        }
+
+        usuario.setDireccionPrincipal(null);
+        usuarioRepository.save(usuario);
+
         direccionRepository.deleteByUsuario(usuario);
+
         List<Pedido> pedidos = pedidoRepository.findByUsuario(usuario);
         for (Pedido pedido : pedidos) {
             detallePedidoRepository.deleteByPedido(pedido);
+
             if (pedido.getPago() != null) {
                 pagoRepository.deleteById(pedido.getPago().getId_pago());
             }
+
             if (pedido.getEnvio() != null) {
                 envioRepository.deleteById(pedido.getEnvio().getId_envio());
             }
+
+            pedidoRepository.deleteById(pedido.getId_pedido());
         }
-        pedidoRepository.deleteByUsuario(usuario);
+
         usuarioRepository.delete(usuario);
         return true;
     }

@@ -52,11 +52,11 @@ public class Usuario {
     @JoinColumn(name = "id_direccion", nullable = true)
     private Direccion direccionPrincipal;
 
-    @OneToMany(mappedBy = "usuario")
+    @OneToMany(mappedBy = "usuario", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Direccion> direcciones;
 
-    @OneToMany(mappedBy = "usuario")
+    @OneToMany(mappedBy = "usuario", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Pedido> pedidos;
 }
