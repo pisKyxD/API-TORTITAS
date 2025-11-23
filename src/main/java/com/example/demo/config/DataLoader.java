@@ -4,15 +4,41 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.model.*;
-import com.example.demo.repository.*;
+import com.example.demo.model.Categoria;
+import com.example.demo.model.Comuna;
+import com.example.demo.model.DetallePedido;
+import com.example.demo.model.Direccion;
+import com.example.demo.model.Envio;
+import com.example.demo.model.Imagen;
+import com.example.demo.model.Pago;
+import com.example.demo.model.Pedido;
+import com.example.demo.model.Producto;
+import com.example.demo.model.Region;
+import com.example.demo.model.Rol;
+import com.example.demo.model.Sabor;
+import com.example.demo.model.Usuario;
+import com.example.demo.repository.CategoriaRepository;
+import com.example.demo.repository.ComunaRepository;
+import com.example.demo.repository.DetallePedidoRepository;
+import com.example.demo.repository.DireccionRepository;
+import com.example.demo.repository.EnvioRepository;
+import com.example.demo.repository.ImagenRepository;
+import com.example.demo.repository.PagoRepository;
+import com.example.demo.repository.PedidoRepository;
+import com.example.demo.repository.ProductoRepository;
+import com.example.demo.repository.RegionRepository;
+import com.example.demo.repository.RolRepository;
+import com.example.demo.repository.SaborRepository;
+import com.example.demo.repository.UsuarioRepository;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 @Component
 public class DataLoader implements CommandLineRunner {
