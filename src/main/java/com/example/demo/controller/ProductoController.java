@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.ProductoCreateRequest;
 import com.example.demo.model.Producto;
 import com.example.demo.service.ProductoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,12 +61,19 @@ public class ProductoController {
     }
 
     @PostMapping
-    @Operation(summary = "Registrar un nuevo producto")
-    public ResponseEntity<Producto> save(@RequestBody Producto producto) {
-        Producto guardado = productoService.save(producto);
-        Producto completo = productoService.findById(guardado.getId_producto());
-        return ResponseEntity.status(201).body(completo);
-    }
+public ResponseEntity<Producto> save(@RequestBody ProductoCreateRequest request) {
+    Producto producto = productoService.crearProducto(
+            request.getNombre(),
+            request.getDescripcion(),
+            request.getPrecio(),
+            request.getStock(),
+            request.getCategoriaId(),
+            request.getSaborId()
+    );
+
+    return ResponseEntity.status(201).body(producto);
+}
+
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar un producto")

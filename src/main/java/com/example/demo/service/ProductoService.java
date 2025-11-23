@@ -1,17 +1,30 @@
 package com.example.demo.service;
 
+import com.example.demo.model.Categoria;
 import com.example.demo.model.Producto;
+import com.example.demo.model.Sabor;
+import com.example.demo.repository.CategoriaRepository;
 import com.example.demo.repository.DetallePedidoRepository;
 import com.example.demo.repository.ImagenRepository;
 import com.example.demo.repository.ProductoRepository;
+import com.example.demo.repository.SaborRepository;
+
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
 @Transactional
 public class ProductoService {
+
+    @Autowired
+    private CategoriaRepository categoriaRepository;
+
+    @Autowired
+    private SaborRepository saborRepository;
 
     @Autowired
     private ProductoRepository productoRepository;
@@ -46,6 +59,32 @@ public class ProductoService {
             return productoRepository.save(productoToUpdate);
         }
         return null;
+    }
+
+    public Producto crearProducto(
+            String nombre,
+            String descripcion,
+            BigDecimal precio,
+            int stock,
+            Long categoriaId,
+            Long saborId) {
+        Producto producto = new Producto();
+
+        producto.setNombre(nombre);
+        producto.setDescripcion(descripcion);
+        producto.setPrecio(precio);
+        producto.setStock(stock);
+
+        Categoria categoria = categoriaRepository.findById(categoriaId)
+                .orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
+
+        Sabor sabor = saborRepository.findById(saborId)
+                .orElseThrow(() -> new RuntimeException("Sabor no encontrado"));
+
+        producto.setCategoria(categoria);
+        producto.setSabor(sabor);
+
+        return productoRepository.save(producto);
     }
 
     public Producto patch(Long id, Producto producto) {
