@@ -32,6 +32,7 @@ import com.example.demo.repository.SaborRepository;
 import com.example.demo.repository.UsuarioRepository;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
@@ -41,6 +42,7 @@ import java.util.Map;
 import java.util.Random;
 
 @Component
+@Profile("dev")
 public class DataLoader implements CommandLineRunner {
 
     @Autowired private RegionRepository regionRepository;
