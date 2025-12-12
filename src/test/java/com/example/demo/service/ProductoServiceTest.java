@@ -76,9 +76,6 @@ public class ProductoServiceTest {
         producto.setSabor(sabor);
     }
 
-    // -------------------------------------------------------
-    // Crear entidad auxiliar
-    // -------------------------------------------------------
     private Producto createEntidad() {
         Producto p = new Producto();
         p.setId_producto(2L);
@@ -91,9 +88,6 @@ public class ProductoServiceTest {
         return p;
     }
 
-    // -------------------------------------------------------
-    // testFindAll
-    // -------------------------------------------------------
     @Test
     void testFindAll() {
         when(productoRepository.findAll()).thenReturn(Arrays.asList(producto));
@@ -101,9 +95,6 @@ public class ProductoServiceTest {
         assertEquals(1, lista.size());
     }
 
-    // -------------------------------------------------------
-    // testFindById
-    // -------------------------------------------------------
     @Test
     void testFindById() {
         when(productoRepository.findById(1L)).thenReturn(Optional.of(producto));
@@ -112,9 +103,6 @@ public class ProductoServiceTest {
         assertEquals("Torta Chocolate", result.getNombre());
     }
 
-    // -------------------------------------------------------
-    // testSave
-    // -------------------------------------------------------
     @Test
     void testSave() {
         when(productoRepository.save(producto)).thenReturn(producto);
@@ -123,9 +111,6 @@ public class ProductoServiceTest {
         assertEquals(producto.getNombre(), result.getNombre());
     }
 
-    // -------------------------------------------------------
-    // testUpdate
-    // -------------------------------------------------------
     @Test
     void testUpdate() {
         Producto updated = createEntidad();
@@ -138,9 +123,6 @@ public class ProductoServiceTest {
         assertEquals("Cheesecake", result.getNombre());
     }
 
-    // -------------------------------------------------------
-    // testPatchEntidad
-    // -------------------------------------------------------
     @Test
     void testPatchEntidad() {
         Producto patch = new Producto();
@@ -155,9 +137,6 @@ public class ProductoServiceTest {
         assertEquals("Torta Vainilla", result.getNombre());
     }
 
-    // -------------------------------------------------------
-    // testDeleteById
-    // -------------------------------------------------------
     @Test
     void testDeleteById() {
         when(productoRepository.findById(1L)).thenReturn(Optional.of(producto));
@@ -169,9 +148,6 @@ public class ProductoServiceTest {
         verify(productoRepository, times(1)).delete(producto);
     }
 
-    // -------------------------------------------------------
-    // testFindByCategoria
-    // -------------------------------------------------------
     @Test
     void testFindByCategoria() {
         when(productoRepository.findByCategoriaIdCategoria(1L))
@@ -183,9 +159,6 @@ public class ProductoServiceTest {
         assertEquals("Torta Chocolate", lista.get(0).getNombre());
     }
 
-    // -------------------------------------------------------
-    // testFindBySabor
-    // -------------------------------------------------------
     @Test
     void testFindBySabor() {
         when(productoRepository.findBySaborIdSabor(1L))
