@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.Random;
 
 @Component
-@Profile("dev")
+// @Profile("dev")
 public class DataLoader implements CommandLineRunner {
 
     @Autowired private RegionRepository regionRepository;
